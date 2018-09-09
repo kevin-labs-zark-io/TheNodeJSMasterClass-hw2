@@ -2,15 +2,28 @@
 Homework assignment #1 for The Node.js Master Class, hosted @pirple.thinkific.com.
 
 ## Description
-This application returns a "Hello" message, with an optional name parameter. When it's running try the following (commands for staging environment):
+This application returns a "Hello" message, with an optional name parameter. When it's running try the following cURL commands (port 3000 implies that this is the staging environment):
 ```
 curl -X GET \
   'http://localhost:3000/hello' \
   -H 'Content-Type: application/json'
-
+```
+Output (default)
+```javascript
+{
+    "message": "Hello, World"
+}
+```
+```
 curl -X GET \
   'http://localhost:3000/hello?name=Herbert' \
   -H 'Content-Type: application/json'
+```
+Output
+```javascript
+{
+    "message": "Hello, Herbert"
+}
 ```
 
 ## Running

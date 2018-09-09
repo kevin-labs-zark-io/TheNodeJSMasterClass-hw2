@@ -24,11 +24,16 @@ const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
 
 const handlers = {};
 handlers.health = (data, callback) => callback(200, { 'status': 'up' });
+handlers.hello = (data, callback) => {
+    const target = typeof(data.query.name) === 'string' ? data.query.name : 'World';
+    callback(200, { 'message': `Hello, ${target}` });
+};
 handlers.notFound = (data, callback) => callback(404);
 
 // Define the request router
 const router = {
-    'health': handlers.health
+    'health': handlers.health,
+    'hello' : handlers.hello
 };
 
 const unifiedServer = (req, res) => {

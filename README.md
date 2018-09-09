@@ -1,5 +1,5 @@
-# TheNodeJSMasterClass-hw1
-Homework assignment #1 for The Node.js Master Class, hosted @pirple.thinkific.com.
+# TheNodeJSMasterClass-hw2
+Homework assignment #2 for The Node.js Master Class, hosted @pirple.thinkific.com.
 
 ## Description
 This application returns a "Hello" message, with an optional name parameter. When it's running try the following cURL commands (port 3000 implies that this is the staging environment):

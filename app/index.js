@@ -49,7 +49,7 @@ const unifiedServer = (req, res) => {
     // when 'end' event emitted by the request object, callback to finsih off response
     req.on('end', () => {
 
-        buffer += decoder.end(data);
+        buffer += decoder.end();
 
         const handler = typeof (router[path]) !== 'undefined' ? router[path] : handlers.notFound;
 

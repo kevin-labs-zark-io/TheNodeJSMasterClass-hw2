@@ -1,5 +1,5 @@
-# pirple-hw1
-Homework assignment #1 for The Node.js Master Class.
+# TheNodeJSMasterClass-hw1
+Homework assignment #1 for The Node.js Master Class, hosted @pirple.thinkific.com.
 
 ## Description
 This application returns a "Hello" message, with an optional name parameter. When it's running try the following (commands for staging environment):

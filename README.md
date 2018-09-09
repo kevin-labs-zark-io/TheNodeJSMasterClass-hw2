@@ -3,6 +3,8 @@ Homework assignment #1 for The Node.js Master Class, hosted @pirple.thinkific.co
 
 ## Description
 This application returns a "Hello" message, with an optional name parameter. When it's running try the following cURL commands (port 3000 implies that this is the staging environment):
+
+Input (no parameters)
 ```
 curl -X GET \
   'http://localhost:3000/hello' \
@@ -14,6 +16,7 @@ Output (default)
     "message": "Hello, World"
 }
 ```
+Input (name parameter)
 ```
 curl -X GET \
   'http://localhost:3000/hello?name=Herbert' \

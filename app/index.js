@@ -28,7 +28,8 @@ const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
 const router = {
     'health' : handlers.health,
     'users' : handlers.users,
-    'tokens' : handlers.tokens
+    'tokens' : handlers.tokens,
+    'menu/items' : handlers.items
   };
 
 const unifiedServer = (req, res) => {

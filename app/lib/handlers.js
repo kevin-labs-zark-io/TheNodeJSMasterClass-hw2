@@ -344,5 +344,24 @@ handlers._tokens.verifyToken = function (id, email, callback) {
 };
 
 
+// Menu items
+handlers.items = function (data, callback) {
+  const methods = ['get'];
+  if (methods.indexOf(data.method) > -1) {
+    handlers._items[data.method](data, callback);
+  } else {
+    callback(405);
+  }
+};
+
+// Menu items methods container
+handlers._items = {};
+
+// Tokens - get
+// Required data: id
+// Optional data: none
+handlers._items.get = function (data, callback) {
+};
+
 // Export the handlers
 module.exports = handlers;

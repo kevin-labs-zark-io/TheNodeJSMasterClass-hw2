@@ -4,25 +4,26 @@
 
 var fs = require('fs');
 var path = require('path');
+var helpers = require('./helpers');
 
 var lib = {};
 
-lib.baseDir = path.join(__dirname,'/../.data/');
+lib.baseDir = path.join(__dirname, '/../.data/');
 
 function getPath(dir, file) {
-    return lib.baseDir+dir+'/'+file+'.json';
+  return lib.baseDir + dir + '/' + file + '.json';
 };
 
 // create
-lib.create = function(dir,file,data,callback){
+lib.create = function (dir, file, data, callback) {
 
-    fs.open(getPath(dir,file), 'wx', (err, fileDescriptor) => {
-    if(!err && fileDescriptor){
+  fs.open(getPath(dir, file), 'wx', (err, fileDescriptor) => {
+    if (!err && fileDescriptor) {
       const stringData = JSON.stringify(data);
       fs.writeFile(fileDescriptor, stringData, (err) => {
-        if(!err){
+        if (!err) {
           fs.close(fileDescriptor, (err) => {
-            if(!err){
+            if (!err) {
               callback(false);
             } else {
               callback('Error closing new file');
@@ -39,25 +40,30 @@ lib.create = function(dir,file,data,callback){
 };
 
 // read
-lib.read = function(dir,file,callback){
+lib.read = function (dir, file, callback) {
 
-    fs.readFile(getPath(dir,file), 'utf8', (err,data) => {
-    callback(err,data);
+  fs.readFile(getPath(dir, file), 'utf8', (err, data) => {
+    if (!err && data) {
+      const parsedData = helpers.parseJsonToObject(data);
+      callback(false, parsedData);
+    } else {
+      callback(err, data);
+    }
   });
 };
 
 // update
-lib.update = function(dir,file,data,callback){
+lib.update = function (dir, file, data, callback) {
 
-  fs.open(getPath(dir,file), 'r+', (err, fileDescriptor) => {
-    if(!err && fileDescriptor){
+  fs.open(getPath(dir, file), 'r+', (err, fileDescriptor) => {
+    if (!err && fileDescriptor) {
       const stringData = JSON.stringify(data);
       fs.truncate(fileDescriptor, (err) => {
-        if(!err){
+        if (!err) {
           fs.writeFile(fileDescriptor, stringData, (err) => {
-            if(!err){
+            if (!err) {
               fs.close(fileDescriptor, (err) => {
-                if(!err){
+                if (!err) {
                   callback(false);
                 } else {
                   callback('Error closing existing file');
@@ -78,14 +84,10 @@ lib.update = function(dir,file,data,callback){
 };
 
 // delete
-lib.delete = function(dir,file,callback){
+lib.delete = function (dir, file, callback) {
 
-  fs.unlink(getPath(dir,file), 'r+', (err, fileDescriptor) => {
-    if(!err){
-        callback(false);
-    } else {
-        callback('Error deleting file');
-    }
+  fs.unlink(getPath(dir, file), (err) => {
+    callback(err);
   });
 };
 

@@ -3,7 +3,9 @@ const http = require('http');
 const https = require('https');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
-const config = require('./config');
+const config = require('./lib/config');
+const handlers = require('./lib/handlers');
+const helpers = require('./lib/helpers');
 
 const httpServer = http.createServer((req, res) => {
     unifiedServer(req,res);
@@ -22,19 +24,12 @@ const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
     console.log(`Listening on port ${config.httpsPort} in ${config.envName} mode.`);
 });
 
-const handlers = {};
-handlers.health = (data, callback) => callback(200, { 'status': 'up' });
-handlers.hello = (data, callback) => {
-    const target = typeof(data.query.name) === 'string' ? data.query.name : 'World';
-    callback(200, { 'message': `Hello, ${target}` });
-};
-handlers.notFound = (data, callback) => callback(404);
-
-// Define the request router
+// request router
 const router = {
-    'health': handlers.health,
-    'hello' : handlers.hello
-};
+    'health' : handlers.health,
+    'users' : handlers.users,
+    'tokens' : handlers.tokens
+  };
 
 const unifiedServer = (req, res) => {
 
@@ -63,7 +58,7 @@ const unifiedServer = (req, res) => {
             'query': query,
             'method': method,
             'headers': headers,
-            'payload': buffer
+            'payload': helpers.parseJsonToObject(buffer)
         };
 
         handler(data, function (statusCode, payload) {

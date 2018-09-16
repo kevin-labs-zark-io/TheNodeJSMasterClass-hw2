@@ -29,7 +29,8 @@ const router = {
     'health' : handlers.health,
     'users' : handlers.users,
     'tokens' : handlers.tokens,
-    'menu/items' : handlers.items
+    'menu/items' : handlers.menu.items,
+    'cart/items' : handlers.cart.items
   };
 
 const unifiedServer = (req, res) => {

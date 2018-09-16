@@ -343,25 +343,74 @@ handlers._tokens.verifyToken = function (id, email, callback) {
   });
 };
 
+// Wrapper for menu
+handlers.menu = {};
 
 // Menu items
-handlers.items = function (data, callback) {
+handlers.menu.items = function (data, callback) {
   const methods = ['get'];
   if (methods.indexOf(data.method) > -1) {
-    handlers._items[data.method](data, callback);
+    handlers.menu._items[data.method](data, callback);
   } else {
     callback(405);
   }
 };
 
 // Menu items methods container
-handlers._items = {};
+handlers.menu._items = {};
 
-// Tokens - get
+// Items - get
 // Required data: id
 // Optional data: none
-handlers._items.get = function (data, callback) {
+handlers.menu._items.get = function (data, callback) {
+
+  const email = helpers.validateEmail(data.query.email);
+  if (email) {
+    const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+    handlers._tokens.verifyToken(token, email, function (tokenIsValid) {
+      if (tokenIsValid) {
+        const items = [];
+        const item_001 = {};
+        item_001.name='Mozzarella Sticks';
+        item_001.description='Five of our award-winning mozzarella sticks made completely from scratch, including housemade fresh mozzarella and garlic-herbed breadcrumbs. Served with marinara on the side.';
+        item_001.price='$11.00'
+        items.push(item_001);
+        const item_002 = {};
+        item_002.name='12" Sausage Pizza';
+        item_002.description='The Quad Cities favorite: specially-seasoned housemade crumbled sausage, Roots pizza sauce, and Quad Cities mozzarella blend.';
+        item_002.price='$16.00'
+        items.push(item_002);
+        const item_003 = {};
+        item_003.name='12" Garden Pizza';
+        item_003.description='Roasted mushrooms, diced green peppers, roasted red peppers, olive mix, Roots pizza sauce, and Quad Cities mozzarella blend.';
+        item_003.price='$20.00'
+        items.push(item_003);
+        callback(200, items);        
+      } else {
+        callback(403,{"Error" : "Missing required token in header, or token is invalid."})
+      }
+    });
+  } else {
+    callback(400, { 'Error': 'Missing required field' });
+  }
 };
+
+// wrapper for cart
+handlers.cart = {};
+
+// Cart items methods container
+handlers.cart._items = {};
+
+// Cart items
+handlers.cart.items = function (data, callback) {
+  const methods = ['post', 'get', 'delete'];
+  if (methods.indexOf(data.method) > -1) {
+    handlers.cart._items[data.method](data, callback);
+  } else {
+    callback(405);
+  }
+};
+
 
 // Export the handlers
 module.exports = handlers;

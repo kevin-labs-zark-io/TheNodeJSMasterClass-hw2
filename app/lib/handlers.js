@@ -42,8 +42,6 @@ handlers._users.post = function (data, callback) {
   const password = helpers.validateName(data.payload.password);
   const tosAgreement = helpers.validateAgreed(data.payload.tosAgreement);
 
-  console.log('fn:', email);
-
   if (firstName && lastName && email && password && tosAgreement) {
     // Make sure the user doesnt already exist
     _data.read('users', email, function (err, data) {
@@ -359,8 +357,8 @@ handlers.menu.items = function (data, callback) {
 // Menu items methods container
 handlers.menu._items = {};
 
-// Items - get
-// Required data: id
+// Menu Items - get
+// Required data: email
 // Optional data: none
 handlers.menu._items.get = function (data, callback) {
 
@@ -369,23 +367,13 @@ handlers.menu._items.get = function (data, callback) {
     const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
     handlers._tokens.verifyToken(token, email, function (tokenIsValid) {
       if (tokenIsValid) {
-        const items = [];
-        const item_001 = {};
-        item_001.name='Mozzarella Sticks';
-        item_001.description='Five of our award-winning mozzarella sticks made completely from scratch, including housemade fresh mozzarella and garlic-herbed breadcrumbs. Served with marinara on the side.';
-        item_001.price='$11.00'
-        items.push(item_001);
-        const item_002 = {};
-        item_002.name='12" Sausage Pizza';
-        item_002.description='The Quad Cities favorite: specially-seasoned housemade crumbled sausage, Roots pizza sauce, and Quad Cities mozzarella blend.';
-        item_002.price='$16.00'
-        items.push(item_002);
-        const item_003 = {};
-        item_003.name='12" Garden Pizza';
-        item_003.description='Roasted mushrooms, diced green peppers, roasted red peppers, olive mix, Roots pizza sauce, and Quad Cities mozzarella blend.';
-        item_003.price='$20.00'
-        items.push(item_003);
-        callback(200, items);        
+        _data.read('menus', 'default', function (err, menuData) {
+          if (!err && menuData) {
+            callback(200, menuData);
+          } else {
+            callback(500);
+          }
+        });    
       } else {
         callback(403,{"Error" : "Missing required token in header, or token is invalid."})
       }
@@ -411,6 +399,86 @@ handlers.cart.items = function (data, callback) {
   }
 };
 
+// Cart Items - get
+// Required data: email
+// Optional data: none
+handlers.cart._items.get = function (data, callback) {
+
+  const email = helpers.validateEmail(data.query.email);
+  if (email) {
+    const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+    handlers._tokens.verifyToken(token, email, function (tokenIsValid) {
+      if (tokenIsValid) {
+        _data.read('carts', email, function (err, cartData) {
+          if (!err && cartData) {
+            callback(200, cartData);
+          } else {
+            callback(404);
+          }
+        });
+      } else {
+        callback(403,{"Error" : "Missing required token in header, or token is invalid."})
+      }
+    });
+  } else {
+    callback(400, { 'Error': 'Missing required field' });
+  }
+};
+
+// Cart Items - post
+// Required data: email, menu item id
+// Cart is identified by email
+handlers.cart._items.post = function(data, callback) {
+
+  const email = helpers.validateEmail(data.query.email);
+  const menuItemId = typeof (data.payload.id) === 'number' ? data.payload.id : false;
+
+  if(email && menuItemId) {
+    const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+    handlers._tokens.verifyToken(token, email, function (tokenIsValid) {
+      if (tokenIsValid) {
+        _data.read('menus', 'default', function (err, menuData) {
+          if (!err && menuData) {
+            _data.read('carts', email, function (err, cartData) {
+              if (!err && cartData) {
+                //existing cart
+                const menuItem = menuData.items.filter(function(value){ return value.id==menuItemId;});
+                cartData.items.push(menuItem[0]);
+                _data.update('carts', email, cartData, function (err) {
+                  if (!err) {
+                    callback(200, cartData.items);
+                  } else {
+                    callback(500, { 'Error': 'Could not update an existing cart' });
+                  }
+                });             
+              } else {
+                //new cart
+                const newCartData = {
+                  "items" : []
+                };
+                const menuItem = menuData.items.filter(function(value){ return value.id==menuItemId;});
+                newCartData.items.push(menuItem[0]);
+                _data.create('carts', email, newCartData, function (err) {
+                  if (!err) {
+                    callback(200, newCartData.items);
+                  } else {
+                    callback(500, { 'Error': 'Could not create a new cart' });
+                  }
+                });
+              }
+            });
+          } else {
+            callback(500);
+          }
+        });
+      } else {
+        callback(403,{"Error" : "Missing required token in header, or token is invalid."})
+      }
+    });
+  } else {
+    callback(400, { 'Error': 'Missing required field' });
+  }
+};
 
 // Export the handlers
 module.exports = handlers;

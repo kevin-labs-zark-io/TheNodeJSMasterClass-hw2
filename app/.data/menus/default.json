@@ -1,0 +1,22 @@
+{
+  "items" : [
+    {
+      "id" : 1001,
+      "name" : "Mozzarella Sticks",
+      "description" : "Five of our award-winning mozzarella sticks made completely from scratch, including housemade fresh mozzarella and garlic-herbed breadcrumbs. Served with marinara on the side.",
+      "price" : "$11.00"
+    },
+    {
+      "id" : 1002,
+      "name" : "12\" Sausage Pizza",
+      "description" : "The Quad Cities favorite: specially-seasoned housemade crumbled sausage, Roots pizza sauce, and Quad Cities mozzarella blend.",
+      "price" : "$16.00"
+    },
+    {
+      "id" : 1003,
+      "name" : "12\" Garden Pizza",
+      "description" : "Roasted mushrooms, diced green peppers, roasted red peppers, olive mix, Roots pizza sauce, and Quad Cities mozzarella blend.",
+      "price" : "$20.00"
+    }
+  ]
+}
